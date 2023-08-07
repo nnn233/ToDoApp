@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <CheckBox
+        android:id="@+id/check_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/image_priority"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/priority_text"
+        app:layout_constraintBottom_toBottomOf="@id/check_box"
+        app:layout_constraintStart_toEndOf="@id/check_box"
+        app:layout_constraintTop_toTopOf="@id/check_box" />
+
+    <TextView
+        android:id="@+id/item_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="42dp"
+        android:textAppearance="@style/TextAppearance.TodoApp.Body.TodoItem"
+        app:layout_constraintStart_toEndOf="@id/image_priority"
+        app:layout_constraintTop_toTopOf="@id/check_box"
+        app:layout_constraintEnd_toStartOf="@id/extra_info"/>
+
+    <TextView
+        android:id="@+id/item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.TodoApp.Subhead"
+        app:layout_constraintStart_toStartOf="@id/item_text"
+        app:layout_constraintTop_toBottomOf="@id/item_text" />
+
+    <ImageView
+        android:id="@+id/extra_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/extra_info"
+        android:padding="10dp"
+        android:src="@drawable/info_outline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/check_box" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

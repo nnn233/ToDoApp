@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">ToDo App</string>
+    <string name="my_items">Мои дела</string>
+    <string name="completed">"Выполнено — %d"</string>
+    <string name="save_item">Сохранить</string>
+    <string name="things_to_do">Что надо сделать…</string>
+    <string name="priority_text">Важность</string>
+    <string name="to_do_till">Сделать до</string>
+    <string name="delete">Удалить</string>
+    <string name="cancel">Отменить</string>
+    <string name="completed_items_visible">Завершенные дела отображаются на экране</string>
+    <string name="add_new_item">Добавить новый элемент</string>
+    <string name="extra_info">Дополнительная информация</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
+    <string name="dialog_delete_changes_title">Покинуть экран?</string>
+    <string name="dialog_delete_changes_message">Внесенные изменения не сохранятся</string>
+    <string name="network_items_error">Ошибка сети, были загружены устаревшие данные</string>
+    <string name="db_items_error">Ошибка обновления данных</string>
+    <string name="not_found_item_error">Ошибка данных, элемент не был найден</string>
+    <string name="low_priority">Низкий</string>
+    <string name="high_priority">!! Высокий</string>
+    <string-array name="priority_items">
+        <item>@string/low_priority</item>
+        <item>@string/no</item>
+        <item>@string/high_priority</item>
+    </string-array>
+</resources>
