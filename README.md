@@ -1,4 +1,4 @@
-![document_5415879646300354594](https://github.com/nnn233/ToDoApp/assets/126052177/7a72a1c0-8ba9-489b-b3cd-e6f52ad51af5)# ToDoApp   
+# ToDoApp   
 
 ## Содержание
 * [Общая информация](#general-info)
