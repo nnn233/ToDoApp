@@ -4,7 +4,7 @@
     <string name="completed">"Выполнено — %d"</string>
     <string name="save_item">Сохранить</string>
     <string name="things_to_do">Что надо сделать…</string>
-    <string name="priority_text">Важность</string>
+    <string name="priority_text">Приоритет</string>
     <string name="to_do_till">Сделать до</string>
     <string name="delete">Удалить</string>
     <string name="cancel">Отменить</string>
@@ -20,9 +20,7 @@
     <string name="not_found_item_error">Ошибка данных, элемент не был найден</string>
     <string name="low_priority">Низкий</string>
     <string name="high_priority">!! Высокий</string>
-    <string-array name="priority_items">
-        <item>@string/low_priority</item>
-        <item>@string/no</item>
-        <item>@string/high_priority</item>
-    </string-array>
+    <string name="delete_element">Удалить элемент?</string>
+    <string name="empty_list_items_message">У Вас пока нет дел, для добавления нажмите "+"</string>
+    <string name="all_items_done_message">Все дела выполнены</string>
 </resources>

@@ -22,12 +22,14 @@
 
     <TextView
         android:id="@+id/item_text"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="42dp"
-        android:textAppearance="@style/TextAppearance.TodoApp.Body.TodoItem"
+        android:maxLines="3"
+        android:ellipsize="end"
+        app:layout_constrainedWidth="true"
+        android:textAppearance="@style/TextAppearance.TodoApp.Body"
         app:layout_constraintStart_toEndOf="@id/image_priority"
         app:layout_constraintTop_toTopOf="@id/check_box"
         app:layout_constraintEnd_toStartOf="@id/extra_info"/>
