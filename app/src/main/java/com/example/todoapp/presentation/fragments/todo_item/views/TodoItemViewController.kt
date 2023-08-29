@@ -10,9 +10,9 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
+import com.example.todoapp.R
 import com.example.todoapp.application.ItemPriority
 import com.example.todoapp.presentation.fragments.converters.LongDateToStringConverter
-import com.example.todoapp.R
 import com.example.todoapp.presentation.fragments.items.ItemsFragment
 import com.example.todoapp.presentation.fragments.todo_item.TodoItemUIState
 import com.example.todoapp.presentation.fragments.todo_item.dialogs.DatePickerDialog
@@ -21,7 +21,6 @@ import com.example.todoapp.presentation.fragments.todo_item.dialogs.DeleteItemDi
 import com.example.todoapp.presentation.fragments.todo_item.popup_menus.PriorityPopupMenu
 import com.example.todoapp.presentation.view_models.TodoItemViewModel
 import com.google.android.material.appbar.AppBarLayout
-import java.time.Duration
 import java.util.Calendar
 import java.util.UUID
 
@@ -99,8 +98,8 @@ class TodoItemViewController(
 
     private fun setUpCloseClickListener() {
         itemClose.setOnClickListener {
-            if(viewModel.item.value!=getInfo())
-            DeleteChangesDialog().show(activity.supportFragmentManager, null)
+            if (viewModel.item.value != getInfo())
+                DeleteChangesDialog().show(activity.supportFragmentManager, null)
         }
     }
 
@@ -128,8 +127,11 @@ class TodoItemViewController(
                     .replace(R.id.main_fragment, ItemsFragment())
                     .addToBackStack(null)
                     .commit()
-            }
-            else Toast.makeText(activity.applicationContext, "Заполните описание дела", Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(
+                activity.applicationContext,
+                "Заполните описание дела",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -139,19 +141,17 @@ class TodoItemViewController(
         }
     }
 
+
     private fun setUpErrors() {
-        viewModel.eventNetworkError.observe(lifecycleOwner) { networkError ->
-            if (networkError && viewModel.isNetworkErrorShown.value != true) {
+        viewModel.errorState.observe(lifecycleOwner) { error ->
+            if (error.remoteError) {
                 Toast.makeText(
                     activity.applicationContext,
                     activity.applicationContext.getString(R.string.network_items_error),
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
-
-        viewModel.eventDbError.observe(lifecycleOwner) { dbError ->
-            if (dbError && viewModel.isDbErrorShown.value != true) {
+            if (error.dbError) {
                 Toast.makeText(
                     activity.applicationContext,
                     activity.applicationContext.getString(R.string.db_items_error),
@@ -159,21 +159,12 @@ class TodoItemViewController(
                 ).show()
             }
         }
-
-        viewModel.eventNotFoundError.observe(lifecycleOwner) { notFoundError ->
-            if (notFoundError && viewModel.isNotFoundErrorShown.value != true) {
-                Toast.makeText(
-                    activity.applicationContext,
-                    activity.applicationContext.getString(R.string.not_found_item_error),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
     }
 
-    private fun isEmptyDescription() :Boolean {
-        return itemDescription.text.toString()==""
+    private fun isEmptyDescription(): Boolean {
+        return itemDescription.text.toString() == ""
     }
+
     private fun invokeDatePickerDialog() {
         val datePicker = DatePickerDialog.build()
         datePicker.addOnPositiveButtonClickListener {

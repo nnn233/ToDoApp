@@ -40,7 +40,7 @@ class ItemsViewModel(
                 todoItemRepository.getItems()
                 _errorState.postValue(ErrorState())
             } catch (_: IOException) {
-                ErrorState(remoteError = true)
+                _errorState.postValue(ErrorState(remoteError = true))
             } catch (_: SQLiteException) {
                 ErrorState(dbError = true)
             }
@@ -53,7 +53,7 @@ class ItemsViewModel(
                 val isVisible = !(_itemsState.value?.isDoneItemsVisible ?: true)
                 todoItemRepository.changeVisibleItems(isVisible)
             } catch (_: IOException) {
-                ErrorState(remoteError = true)
+                _errorState.postValue(ErrorState(remoteError = true))
             } catch (_: SQLiteException) {
                 ErrorState(dbError = true)
             }
@@ -65,7 +65,7 @@ class ItemsViewModel(
             try {
                 todoItemRepository.changeDoneState(id, isDone)
             } catch (_: IOException) {
-                ErrorState(remoteError = true)
+                _errorState.postValue(ErrorState(remoteError = true))
             } catch (_: SQLiteException) {
                 ErrorState(dbError = true)
             }
@@ -77,7 +77,7 @@ class ItemsViewModel(
             try {
                 todoItemRepository.deleteItem(id)
             } catch (_: IOException) {
-                ErrorState(remoteError = true)
+                _errorState.postValue(ErrorState(remoteError = true))
             } catch (_: SQLiteException) {
                 ErrorState(dbError = true)
             }
