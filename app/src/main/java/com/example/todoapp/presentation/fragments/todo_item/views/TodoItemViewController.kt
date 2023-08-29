@@ -21,6 +21,7 @@ import com.example.todoapp.presentation.fragments.todo_item.dialogs.DeleteItemDi
 import com.example.todoapp.presentation.fragments.todo_item.popup_menus.PriorityPopupMenu
 import com.example.todoapp.presentation.view_models.TodoItemViewModel
 import com.google.android.material.appbar.AppBarLayout
+import java.time.Duration
 import java.util.Calendar
 import java.util.UUID
 
@@ -55,8 +56,8 @@ class TodoItemViewController(
     }
 
     private fun setUpDeadlineChangedListener() {
-        itemDeadlineSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
+        itemDeadlineSwitch.setOnClickListener {
+            if (itemDeadlineSwitch.isChecked) {
                 invokeDatePickerDialog()
             } else {
                 itemDeadlineText.text = ""
@@ -90,32 +91,45 @@ class TodoItemViewController(
     private fun setUpToolBarViews() {
         nestedScrollView.setOnScrollChangeListener { v, _, _, _, _ ->
             if (v.canScrollVertically(SCROLL_DIRECTION_UP))
-                topBar.elevation = activity.applicationContext.resources.getDimension(R.dimen.app_bar_elevation)
+                topBar.elevation =
+                    activity.applicationContext.resources.getDimension(R.dimen.app_bar_elevation)
             else topBar.elevation = 0f
         }
     }
 
     private fun setUpCloseClickListener() {
         itemClose.setOnClickListener {
+            if(viewModel.item.value!=getInfo())
             DeleteChangesDialog().show(activity.supportFragmentManager, null)
         }
     }
 
     private fun setUpSaveClickListener() {
         itemSave.setOnClickListener {
-            if (checkIsItemEdited())
-                viewModel.updateItem(
-                    getInfo()
-                )
-            else
-                viewModel.addItem(
-                    getInfo()
-                )
-            activity.supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.main_fragment, ItemsFragment())
-                .addToBackStack(null)
-                .commit()
+            if (!isEmptyDescription()) {
+                if (checkIsItemEdited())
+                    viewModel.item.value?.copy(
+                        description = itemDescription.text.toString(),
+                        importance = ItemPriority.fromString(itemPriority.text.toString()),
+                        deadline = LongDateToStringConverter.convertDateToLong(itemDeadlineText.text.toString()),
+                        isDone = viewModel.item.value?.isDone ?: false,
+                        modificationDate = Calendar.getInstance().timeInMillis
+                    )?.let { model ->
+                        viewModel.updateItem(
+                            model
+                        )
+                    }
+                else
+                    viewModel.addItem(
+                        getInfo()
+                    )
+                activity.supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.main_fragment, ItemsFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+            else Toast.makeText(activity.applicationContext, "Заполните описание дела", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -157,6 +171,9 @@ class TodoItemViewController(
         }
     }
 
+    private fun isEmptyDescription() :Boolean {
+        return itemDescription.text.toString()==""
+    }
     private fun invokeDatePickerDialog() {
         val datePicker = DatePickerDialog.build()
         datePicker.addOnPositiveButtonClickListener {
@@ -173,7 +190,7 @@ class TodoItemViewController(
         DeleteItemDialog(viewModel).show(activity.supportFragmentManager, null)
 
     private fun checkIsItemEdited(): Boolean =
-        viewModel.item.value!=null
+        viewModel.item.value != null
 
 
     private fun getInfo(): TodoItemUIState =

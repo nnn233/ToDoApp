@@ -1,6 +1,5 @@
 package com.example.todoapp.presentation.fragments.items
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,7 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todoapp.presentation.fragments.utils.BundleUtils.ITEM_ID
+import com.example.todoapp.presentation.fragments.utils.ITEM_ID
 import com.example.todoapp.R
 import com.example.todoapp.presentation.fragments.todo_item.TodoItemUIState
 import com.example.todoapp.presentation.fragments.items.recycler_view_items.ItemsAdapter
@@ -36,8 +35,6 @@ class ItemsViewController(
     private val addItemButton: FloatingActionButton = rootView.findViewById(R.id.add_new_item)
     private val nullItemsText:TextView=rootView.findViewById(R.id.empty_list_message)
 
-    private var itemsCount = 0
-
     fun setUpViews() {
         setUpItemsList()
         setUpItemsCountView()
@@ -45,7 +42,7 @@ class ItemsViewController(
         setUpCollapsingToolBar()
         setUpAdapterClickListener()
         setUpButtonClickListener()
-        setUpIconVisibility()
+        setUpViewModel()
     }
 
     private fun setUpButtonClickListener() {
@@ -92,34 +89,22 @@ class ItemsViewController(
     private fun setUpItemsList() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = adapter
-        viewModel.items.observe(lifecycleOwner) { newItems ->
-            if (newItems.isEmpty())
-                setUpNullItemsText(true)
-            else {
-                setUpNullItemsText(false)
-                adapter.items = newItems as MutableList<TodoItemUIState>
-            }
-        }
-        adapter.onChangeDoneStateListener = fun(id: String, isDone: Boolean) {
+        adapter.onChangeDoneStateListener = fun(id: String, isDone: Boolean) =
             viewModel.onChangedDoneState(id, isDone)
-            Log.i("viewmodel", "onChangeDoneStateListener.invoke($id, $isDone)")
-        }
+
     }
 
     private fun setUpItemsCountView() {
-        viewModel.itemsCount.observe(lifecycleOwner) { count ->
-            itemsCount = count
-            itemCountView.text =
-                activity.applicationContext.getString(R.string.completed, itemsCount)
+        itemVisibilityIcon.setOnClickListener {
+            viewModel.onChangedVisibilityState()
         }
     }
 
-    private fun setUpIconVisibility() {
+    private fun setUpViewModel() {
         viewModel.itemsState.observe(lifecycleOwner) {
             changeImage(it.isDoneItemsVisible)
-        }
-        itemVisibilityIcon.setOnClickListener {
-            viewModel.onChangedVisibilityState()
+            changeItemsCount(it.itemsCount)
+            changeItems(it.items)
         }
     }
 
@@ -131,6 +116,21 @@ class ItemsViewController(
 
         itemVisibilityIcon.setImageResource(image)
     }
+
+    private fun changeItemsCount(count:Int) {
+        itemCountView.text =
+            activity.applicationContext.getString(R.string.completed, count)
+    }
+
+    private fun changeItems(items:List<TodoItemUIState>){
+        if (items.isEmpty())
+            setUpNullItemsText(true)
+        else {
+            setUpNullItemsText(false)
+            adapter.items = items as MutableList<TodoItemUIState>
+        }
+    }
+
 
     private fun setUpErrors() {
         viewModel.eventNetworkError.observe(lifecycleOwner) { networkError ->

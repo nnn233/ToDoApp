@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.todoapp.presentation.fragments.utils.BundleUtils.ITEM_ID
 import com.example.todoapp.R
 import com.example.todoapp.application.components.TodoApplication
 import com.example.todoapp.presentation.fragments.todo_item.components.TodoItemFragmentComponent
 import com.example.todoapp.presentation.fragments.todo_item.components.TodoItemFragmentViewComponent
+import com.example.todoapp.presentation.fragments.utils.ITEM_ID
 import com.example.todoapp.presentation.view_models.TodoItemViewModel
 
 class TodoItemFragment : Fragment() {
