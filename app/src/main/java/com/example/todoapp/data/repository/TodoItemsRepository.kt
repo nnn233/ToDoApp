@@ -68,6 +68,27 @@ class TodoItemsRepository(
             remoteDataSource.deleteItem(id)
         }
 
+    suspend fun changeVisibleItems(isVisible: Boolean) {
+        withContext(Dispatchers.Default) {
+            if (isVisible)
+                refreshItems()
+            else _items.postValue(_items.value?.filter { !it.isDone })
+        }
+    }
+
+    suspend fun changeDoneState(id: String, isDone: Boolean) {
+        withContext(Dispatchers.Default) {
+            val item = getItemById(id)?.copy(isDone = isDone)
+            item?.let { updateItem(it) }
+            _items.postValue(
+                items.value.orEmpty().map {
+                    if (it.id == id) it.copy(isDone = isDone)
+                    else it
+                }
+            )
+        }
+    }
+
     private suspend fun returnFromDb(): List<TodoItemUIState> =
         withContext(Dispatchers.Default) {
             localDataSource.getItems().map { it.toTodoItem() }
