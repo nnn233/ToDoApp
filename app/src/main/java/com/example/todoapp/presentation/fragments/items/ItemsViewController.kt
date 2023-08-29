@@ -33,7 +33,7 @@ class ItemsViewController(
     private val itemCountView: TextView = rootView.findViewById(R.id.completed_items)
     private val itemVisibilityIcon: ImageView = rootView.findViewById(R.id.completed_items_icon)
     private val addItemButton: FloatingActionButton = rootView.findViewById(R.id.add_new_item)
-    private val nullItemsText:TextView=rootView.findViewById(R.id.empty_list_message)
+    private val nullItemsText: TextView = rootView.findViewById(R.id.empty_list_message)
 
     fun setUpViews() {
         setUpItemsList()
@@ -62,7 +62,7 @@ class ItemsViewController(
 
     private fun setUpNullItemsText(toBeShown: Boolean) {
         if (toBeShown) {
-           nullItemsText.visibility = View.VISIBLE
+            nullItemsText.visibility = View.VISIBLE
         } else {
             nullItemsText.visibility = View.GONE
         }
@@ -117,12 +117,12 @@ class ItemsViewController(
         itemVisibilityIcon.setImageResource(image)
     }
 
-    private fun changeItemsCount(count:Int) {
+    private fun changeItemsCount(count: Int) {
         itemCountView.text =
             activity.applicationContext.getString(R.string.completed, count)
     }
 
-    private fun changeItems(items:List<TodoItemUIState>){
+    private fun changeItems(items: List<TodoItemUIState>) {
         if (items.isEmpty())
             setUpNullItemsText(true)
         else {
@@ -133,18 +133,15 @@ class ItemsViewController(
 
 
     private fun setUpErrors() {
-        viewModel.eventNetworkError.observe(lifecycleOwner) { networkError ->
-            if (networkError && viewModel.isNetworkErrorShown.value != true) {
+        viewModel.errorState.observe(lifecycleOwner) { error ->
+            if (error.remoteError) {
                 Toast.makeText(
                     activity.applicationContext,
                     activity.applicationContext.getString(R.string.network_items_error),
                     LENGTH_SHORT
                 ).show()
             }
-        }
-
-        viewModel.eventDbError.observe(lifecycleOwner) { dbError ->
-            if (dbError && viewModel.isDbErrorShown.value != true) {
+            if (error.dbError) {
                 Toast.makeText(
                     activity.applicationContext,
                     activity.applicationContext.getString(R.string.db_items_error),
