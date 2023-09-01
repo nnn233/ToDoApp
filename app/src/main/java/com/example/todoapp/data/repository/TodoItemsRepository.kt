@@ -21,7 +21,6 @@ class TodoItemsRepository(
     val items: LiveData<List<TodoItemUIState>>
         get() = _items
 
-
     @MainThread
     suspend fun getItems() {
         val list = withContext(Dispatchers.Default) {
@@ -67,14 +66,6 @@ class TodoItemsRepository(
             _items.postValue(returnFromDb())
             remoteDataSource.deleteItem(id)
         }
-
-    suspend fun changeVisibleItems(isVisible: Boolean) {
-        withContext(Dispatchers.Default) {
-            if (isVisible)
-                refreshItems()
-            else _items.postValue(_items.value?.filter { !it.isDone })
-        }
-    }
 
     suspend fun changeDoneState(id: String, isDone: Boolean) {
         withContext(Dispatchers.Default) {
