@@ -8,16 +8,20 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todoapp.presentation.fragments.utils.ITEM_ID
 import com.example.todoapp.R
-import com.example.todoapp.presentation.fragments.todo_item.TodoItemUIState
 import com.example.todoapp.presentation.fragments.items.recycler_view_items.ItemsAdapter
+import com.example.todoapp.presentation.fragments.items.recycler_view_items.SwipeCallback
 import com.example.todoapp.presentation.fragments.todo_item.TodoItemFragment
+import com.example.todoapp.presentation.fragments.todo_item.TodoItemUIState
+import com.example.todoapp.presentation.fragments.utils.ITEM_ID
 import com.example.todoapp.presentation.view_models.ItemsViewModel
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+
 
 class ItemsViewController(
     private val activity: FragmentActivity,
@@ -26,7 +30,6 @@ class ItemsViewController(
     private val lifecycleOwner: LifecycleOwner,
     private val viewModel: ItemsViewModel,
 ) {
-
     private val recyclerView: RecyclerView = rootView.findViewById(R.id.recycler_view)
     private val collapsingToolBar: CollapsingToolbarLayout =
         rootView.findViewById(R.id.collapsing_tool_bar)
@@ -68,7 +71,6 @@ class ItemsViewController(
         }
     }
 
-
     private fun setUpAdapterClickListener() {
         adapter.setOnClickListener(object :
             ItemsAdapter.OnClickListener {
@@ -89,9 +91,23 @@ class ItemsViewController(
     private fun setUpItemsList() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = adapter
+
+        val callback: ItemTouchHelper.Callback =
+            SwipeCallback(activity.applicationContext, adapter)
+        val touchHelper = ItemTouchHelper(callback)
+        touchHelper.attachToRecyclerView(recyclerView)
+
         adapter.onChangeDoneStateListener = fun(id: String, isDone: Boolean) =
             viewModel.onChangedDoneState(id, isDone)
 
+        adapter.onDeleteItemListener = fun(id: String) {
+            viewModel.deleteItem(id)
+            Snackbar.make(
+                recyclerView,
+                R.string.item_deleted,
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
     }
 
     private fun setUpItemsCountView() {

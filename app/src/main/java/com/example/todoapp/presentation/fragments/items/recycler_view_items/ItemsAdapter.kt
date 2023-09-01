@@ -7,11 +7,11 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.todoapp.presentation.fragments.todo_item.TodoItemUIState
 
 
-class ItemsAdapter : RecyclerView.Adapter<ViewHolder>() {
+class ItemsAdapter : RecyclerView.Adapter<ViewHolder>(), ItemTouchHelperAdapter {
     private var onClickListener: OnClickListener? = null
 
     var onChangeDoneStateListener: ((String, Boolean) -> Unit)? = null
-
+    var onDeleteItemListener: ((String) -> Unit)? = null
     var items = mutableListOf<TodoItemUIState>()
         set(value) {
             val callback = CommonCallback(
@@ -39,6 +39,14 @@ class ItemsAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
     override fun getItemCount(): Int = items.size
+
+    override fun onItemDelete(position: Int) {
+        onDeleteItemListener?.invoke(items[position].id)
+    }
+
+    override fun onItemComplete(position: Int) {
+        onChangeDoneStateListener?.invoke(items[position].id, true)
+    }
 
     fun setOnClickListener(onClickListener: OnClickListener) {
         this.onClickListener = onClickListener

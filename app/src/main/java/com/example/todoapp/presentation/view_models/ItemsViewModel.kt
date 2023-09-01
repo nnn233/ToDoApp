@@ -15,7 +15,7 @@ class ItemsViewModel(
     private val todoItemRepository: TodoItemsRepository
 ) : ViewModel() {
 
-    private var _itemsState = MediatorLiveData<ItemsUIState>()
+    private var _itemsState = MediatorLiveData(ItemsUIState(items = listOf()))
     val itemsState: LiveData<ItemsUIState>
         get() = _itemsState
 
@@ -25,14 +25,17 @@ class ItemsViewModel(
 
     init {
         _itemsState.addSource(todoItemRepository.items) { list ->
+            if(_itemsState.value?.isDoneItemsVisible != false)
             _itemsState.value = itemsState.value?.copy(
                 items = list ?: listOf(),
                 itemsCount = list?.filter { it.isDone }?.size ?: 0
             )
+            else _itemsState.value = itemsState.value?.copy(
+                items = list?.filter { !it.isDone } ?: listOf()
+            )
         }
         refreshDataItems()
     }
-
 
     private fun refreshDataItems() {
         viewModelScope.launch {
@@ -51,7 +54,10 @@ class ItemsViewModel(
         viewModelScope.launch {
             try {
                 val isVisible = !(_itemsState.value?.isDoneItemsVisible ?: true)
-                todoItemRepository.changeVisibleItems(isVisible)
+                _itemsState.postValue(itemsState.value?.copy(
+                    isDoneItemsVisible = isVisible
+                ))
+                refreshDataItems()
             } catch (_: IOException) {
                 _errorState.postValue(ErrorState(remoteError = true))
             } catch (_: SQLiteException) {
@@ -72,7 +78,7 @@ class ItemsViewModel(
         }
     }
 
-    fun deleteItem(id: String) =
+    fun deleteItem(id: String) {
         viewModelScope.launch {
             try {
                 todoItemRepository.deleteItem(id)
@@ -82,4 +88,5 @@ class ItemsViewModel(
                 ErrorState(dbError = true)
             }
         }
+    }
 }

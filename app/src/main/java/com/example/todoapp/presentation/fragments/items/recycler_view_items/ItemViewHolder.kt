@@ -2,7 +2,6 @@ package com.example.todoapp.presentation.fragments.items.recycler_view_items
 
 import android.content.Context
 import android.graphics.Paint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +41,6 @@ class ItemViewHolder(
         checkBox.isChecked = todoItem.isDone
         checkBox.setOnClickListener {
             onChangeDoneStateListener?.invoke(todoItem.id, !todoItem.isDone)
-            Log.i("viewmodel", "onChangeDoneStateListener.invoke()")
         }
 
         applyDescriptionStyle(todoItem.isDone)
