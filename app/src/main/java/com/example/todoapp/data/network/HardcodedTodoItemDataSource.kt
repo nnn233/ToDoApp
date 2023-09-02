@@ -1,9 +1,9 @@
 package com.example.todoapp.data.network
 
-import android.content.res.Resources.NotFoundException
 import com.example.todoapp.application.ItemPriority
 import kotlinx.coroutines.delay
-import java.util.*
+import java.util.Calendar
+import java.util.GregorianCalendar
 
 class HardcodedTodoItemDataSource {
     private var items = mutableListOf(
@@ -129,7 +129,7 @@ class HardcodedTodoItemDataSource {
                 done = true
             }
         }
-        if (!done) throw NotFoundException()
+        if (!done) throw Exception()
     }
 
     suspend fun deleteItem(id: String) {
