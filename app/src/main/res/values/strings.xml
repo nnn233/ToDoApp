@@ -25,4 +25,7 @@
     <string name="all_items_done_message">Все дела выполнены</string>
     <string name="item_deleted">Дело успешно удалено</string>
     <string name="require_description">Заполните описание дела</string>
+    <string name="close_information_window">Закрыть окно с информацией</string>
+    <string name="creation_date">"Дата создания: %s"</string>
+    <string name="modification_date">"Дата изменения: %s"</string>
 </resources>

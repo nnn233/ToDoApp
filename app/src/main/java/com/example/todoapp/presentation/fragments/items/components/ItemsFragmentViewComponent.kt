@@ -10,7 +10,7 @@ class ItemsFragmentViewComponent(
     lifecycleOwner: LifecycleOwner,
 ) {
     val allItemsViewController = ItemsViewController(
-        fragmentComponent.fragment.requireActivity(),
+        fragmentComponent.fragment,
         root,
         fragmentComponent.adapter,
         lifecycleOwner,

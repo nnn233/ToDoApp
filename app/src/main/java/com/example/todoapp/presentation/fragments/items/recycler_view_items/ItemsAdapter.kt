@@ -1,13 +1,15 @@
 package com.example.todoapp.presentation.fragments.items.recycler_view_items
 
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.todoapp.presentation.fragments.todo_item.TodoItemUIState
 
 
-class ItemsAdapter : RecyclerView.Adapter<ViewHolder>(), ItemTouchHelperAdapter {
+class ItemsAdapter(private val activity: FragmentActivity) : RecyclerView.Adapter<ViewHolder>(),
+    ItemTouchHelperAdapter {
     private var onClickListener: OnClickListener? = null
 
     var onChangeDoneStateListener: ((String, Boolean) -> Unit)? = null
@@ -24,7 +26,7 @@ class ItemsAdapter : RecyclerView.Adapter<ViewHolder>(), ItemTouchHelperAdapter 
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ItemViewHolder.create(parent, onChangeDoneStateListener)
+        return ItemViewHolder.create(parent, activity, onChangeDoneStateListener)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

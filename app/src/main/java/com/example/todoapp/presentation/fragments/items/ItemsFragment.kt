@@ -23,8 +23,7 @@ class ItemsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fragmentComponent = ItemsFragmentComponent(
-            applicationComponent,
-            fragment = this,
+            fragment = this.requireActivity(),
             viewModel
         )
     }
