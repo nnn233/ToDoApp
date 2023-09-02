@@ -23,9 +23,11 @@ class TodoItemFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.getString(ITEM_ID)?.let {
             viewModel.getItemById(it)
         }
+
         fragmentComponent = TodoItemFragmentComponent(
             fragment = this,
             viewModel

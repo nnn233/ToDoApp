@@ -1,6 +1,5 @@
 package com.example.todoapp.presentation.view_models
 
-
 import android.database.sqlite.SQLiteException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,7 +13,7 @@ import java.io.IOException
 class TodoItemViewModel(
     private val todoItemRepository: TodoItemsRepository
 ) : ViewModel() {
-    private var _item = MutableLiveData<TodoItemUIState>()
+    private var _item = MutableLiveData(TodoItemUIState())
     val item: LiveData<TodoItemUIState>
         get() = _item
 
@@ -22,7 +21,7 @@ class TodoItemViewModel(
     val errorState: LiveData<ErrorState>
         get() = _errorState
 
-    fun getItemById(id: String) =
+    fun getItemById(id: String) {
         viewModelScope.launch {
             try {
                 val model = todoItemRepository.getItemById(id)
@@ -36,9 +35,10 @@ class TodoItemViewModel(
                 _errorState.postValue(ErrorState(dbError = true))
             }
         }
+    }
 
 
-    fun addItem(item: TodoItemUIState) =
+    fun addItem(item: TodoItemUIState) {
         viewModelScope.launch {
             try {
                 todoItemRepository.addItem(item)
@@ -48,8 +48,9 @@ class TodoItemViewModel(
                 _errorState.postValue(ErrorState(dbError = true))
             }
         }
+    }
 
-    fun updateItem(item: TodoItemUIState) =
+    fun updateItem(item: TodoItemUIState) {
         viewModelScope.launch {
             try {
                 todoItemRepository.updateItem(item)
@@ -59,8 +60,9 @@ class TodoItemViewModel(
                 _errorState.postValue(ErrorState(dbError = true))
             }
         }
+    }
 
-    fun deleteItem(id: String) =
+    fun deleteItem(id: String) {
         viewModelScope.launch {
             try {
                 todoItemRepository.deleteItem(id)
@@ -70,4 +72,5 @@ class TodoItemViewModel(
                 _errorState.postValue(ErrorState(dbError = true))
             }
         }
+    }
 }

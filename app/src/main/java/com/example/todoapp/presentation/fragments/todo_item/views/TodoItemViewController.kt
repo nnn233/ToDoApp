@@ -14,15 +14,13 @@ import com.example.todoapp.R
 import com.example.todoapp.application.ItemPriority
 import com.example.todoapp.presentation.fragments.converters.LongDateToStringConverter
 import com.example.todoapp.presentation.fragments.items.ItemsFragment
-import com.example.todoapp.presentation.fragments.todo_item.TodoItemUIState
 import com.example.todoapp.presentation.fragments.todo_item.dialogs.DatePickerDialog
 import com.example.todoapp.presentation.fragments.todo_item.dialogs.DeleteChangesDialog
 import com.example.todoapp.presentation.fragments.todo_item.dialogs.DeleteItemDialog
 import com.example.todoapp.presentation.fragments.todo_item.popup_menus.PriorityPopupMenu
 import com.example.todoapp.presentation.view_models.TodoItemViewModel
 import com.google.android.material.appbar.AppBarLayout
-import java.util.Calendar
-import java.util.UUID
+import java.util.Date
 
 class TodoItemViewController(
     private val activity: FragmentActivity,
@@ -106,22 +104,11 @@ class TodoItemViewController(
     private fun setUpSaveClickListener() {
         itemSave.setOnClickListener {
             if (!isEmptyDescription()) {
-                if (checkIsItemEdited())
-                    viewModel.item.value?.copy(
-                        description = itemDescription.text.toString(),
-                        importance = ItemPriority.fromString(itemPriority.text.toString()),
-                        deadline = LongDateToStringConverter.convertDateToLong(itemDeadlineText.text.toString()),
-                        isDone = viewModel.item.value?.isDone ?: false,
-                        modificationDate = Calendar.getInstance().timeInMillis
-                    )?.let { model ->
-                        viewModel.updateItem(
-                            model
-                        )
-                    }
-                else
-                    viewModel.addItem(
-                        getInfo()
-                    )
+                getInfo()?.let { item ->
+                    if (checkIsItemEdited())
+                        viewModel.updateItem(item)
+                    else viewModel.addItem(item)
+                }
                 activity.supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.main_fragment, ItemsFragment())
@@ -129,7 +116,7 @@ class TodoItemViewController(
                     .commit()
             } else Toast.makeText(
                 activity.applicationContext,
-                "Заполните описание дела",
+                R.string.require_description,
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -137,10 +124,10 @@ class TodoItemViewController(
 
     private fun setUpItem() {
         viewModel.item.observe(lifecycleOwner) { newItem ->
-            viewHolder.onBind(newItem)
+            if (checkIsItemEdited())
+                viewHolder.onBind(newItem)
         }
     }
-
 
     private fun setUpErrors() {
         viewModel.errorState.observe(lifecycleOwner) { error ->
@@ -181,19 +168,15 @@ class TodoItemViewController(
         DeleteItemDialog(viewModel).show(activity.supportFragmentManager, null)
 
     private fun checkIsItemEdited(): Boolean =
-        viewModel.item.value != null
+        viewModel.item.value != null && viewModel.item.value?.description != ""
 
-
-    private fun getInfo(): TodoItemUIState =
-        TodoItemUIState(
-            id = viewModel.item.value?.id ?: UUID.randomUUID().toString(),
+    private fun getInfo() =
+        viewModel.item.value?.copy(
             description = itemDescription.text.toString(),
             importance = ItemPriority.fromString(itemPriority.text.toString()),
             deadline = LongDateToStringConverter.convertDateToLong(itemDeadlineText.text.toString()),
             isDone = viewModel.item.value?.isDone ?: false,
-            creationDate = viewModel.item.value?.creationDate
-                ?: Calendar.getInstance().timeInMillis,
-            modificationDate = Calendar.getInstance().timeInMillis
+            modificationDate = Date().time
         )
 
     companion object {
