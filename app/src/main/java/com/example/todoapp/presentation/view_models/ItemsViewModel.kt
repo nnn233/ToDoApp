@@ -25,6 +25,10 @@ class ItemsViewModel(
     val errorState: LiveData<ErrorState>
         get() = _errorState
 
+    private var _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean>
+        get() = _isLoading
+
     init {
         _itemsState.addSource(todoItemRepository.items) { list ->
             if (_itemsState.value?.isDoneItemsVisible != false)
@@ -42,7 +46,9 @@ class ItemsViewModel(
     private fun refreshDataItems() {
         viewModelScope.launch {
             try {
+                _isLoading.postValue(true)
                 todoItemRepository.getItems()
+                _isLoading.postValue(false)
                 _errorState.postValue(ErrorState())
             } catch (_: IOException) {
                 _errorState.postValue(ErrorState(remoteError = true))

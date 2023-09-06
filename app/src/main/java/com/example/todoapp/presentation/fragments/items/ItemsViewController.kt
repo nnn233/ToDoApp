@@ -139,7 +139,7 @@ class ItemsViewController(
     }
 
     private fun changeItems(items: List<TodoItemUIState>) {
-        if (items.isEmpty())
+        if (items.isEmpty() && viewModel.isLoading.value != true)
             setUpNullItemsText(true)
         else {
             setUpNullItemsText(false)
