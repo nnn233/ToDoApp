@@ -6,12 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.repository.TodoItemsRepository
+import com.example.todoapp.domain.DeleteItemUseCase
 import com.example.todoapp.presentation.fragments.todo_item.TodoItemUIState
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 class TodoItemViewModel(
-    private val todoItemRepository: TodoItemsRepository
+    private val todoItemRepository: TodoItemsRepository,
+    private val deleteItemUseCase: DeleteItemUseCase
 ) : ViewModel() {
     private var _item = MutableLiveData(TodoItemUIState())
     val item: LiveData<TodoItemUIState>
@@ -65,7 +67,7 @@ class TodoItemViewModel(
     fun deleteItem(id: String) {
         viewModelScope.launch {
             try {
-                todoItemRepository.deleteItem(id)
+                deleteItemUseCase(id)
             } catch (_: IOException) {
                 _errorState.postValue(ErrorState(remoteError = true))
             } catch (_: SQLiteException) {

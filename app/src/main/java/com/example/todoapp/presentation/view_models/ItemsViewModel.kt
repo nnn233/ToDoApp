@@ -7,12 +7,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.repository.TodoItemsRepository
+import com.example.todoapp.domain.DeleteItemUseCase
 import com.example.todoapp.presentation.fragments.items.ItemsUIState
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 class ItemsViewModel(
-    private val todoItemRepository: TodoItemsRepository
+    private val todoItemRepository: TodoItemsRepository,
+    private val deleteItemUseCase: DeleteItemUseCase
 ) : ViewModel() {
 
     private var _itemsState = MediatorLiveData(ItemsUIState(items = listOf()))
@@ -25,11 +27,11 @@ class ItemsViewModel(
 
     init {
         _itemsState.addSource(todoItemRepository.items) { list ->
-            if(_itemsState.value?.isDoneItemsVisible != false)
-            _itemsState.value = itemsState.value?.copy(
-                items = list ?: listOf(),
-                itemsCount = list?.filter { it.isDone }?.size ?: 0
-            )
+            if (_itemsState.value?.isDoneItemsVisible != false)
+                _itemsState.value = itemsState.value?.copy(
+                    items = list ?: listOf(),
+                    itemsCount = list?.filter { it.isDone }?.size ?: 0
+                )
             else _itemsState.value = itemsState.value?.copy(
                 items = list?.filter { !it.isDone } ?: listOf()
             )
@@ -54,9 +56,11 @@ class ItemsViewModel(
         viewModelScope.launch {
             try {
                 val isVisible = !(_itemsState.value?.isDoneItemsVisible ?: true)
-                _itemsState.postValue(itemsState.value?.copy(
-                    isDoneItemsVisible = isVisible
-                ))
+                _itemsState.postValue(
+                    itemsState.value?.copy(
+                        isDoneItemsVisible = isVisible
+                    )
+                )
                 refreshDataItems()
             } catch (_: IOException) {
                 _errorState.postValue(ErrorState(remoteError = true))
@@ -81,7 +85,7 @@ class ItemsViewModel(
     fun deleteItem(id: String) {
         viewModelScope.launch {
             try {
-                todoItemRepository.deleteItem(id)
+                deleteItemUseCase(id)
             } catch (_: IOException) {
                 _errorState.postValue(ErrorState(remoteError = true))
             } catch (_: SQLiteException) {

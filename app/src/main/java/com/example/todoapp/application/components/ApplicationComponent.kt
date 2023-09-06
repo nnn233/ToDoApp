@@ -6,15 +6,18 @@ import com.example.todoapp.data.network.HardcodedTodoItemDataSource
 import com.example.todoapp.data.db.TodoItemRoomDatabase
 import com.example.todoapp.data.repository.ItemsTasksRepository
 import com.example.todoapp.data.repository.TodoItemsRepository
+import com.example.todoapp.domain.DeleteItemUseCase
 
 class ApplicationComponent(database: TodoItemRoomDatabase, workManager: WorkManager) {
     private val hardcodedItemsDataSource = HardcodedTodoItemDataSource()
-    private val itemsRepository = TodoItemsRepository(hardcodedItemsDataSource, database.todoItemDao)
+    private val itemsRepository =
+        TodoItemsRepository(hardcodedItemsDataSource, database.todoItemDao)
     private val itemsTasksRepository = ItemsTasksRepository(workManager)
+    private val deleteItemUseCase = DeleteItemUseCase(itemsRepository)
 
-    val viewModelFactory = ViewModelFactory(itemsRepository)
+    val viewModelFactory = ViewModelFactory(itemsRepository, deleteItemUseCase)
 
-    fun onCreate(){
+    fun onCreate() {
         itemsTasksRepository.refreshItemsPeriodically()
     }
 }
