@@ -1,11 +1,11 @@
 package com.example.todoapp.presentation.fragments.items.recycler_view_items
 
 import android.graphics.Paint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -29,14 +29,7 @@ class ItemViewHolder(
     private val dateItem = itemView.findViewById<TextView>(R.id.item_date)
     private val menu = itemView.findViewById<ImageView>(R.id.extra_info)
 
-    private lateinit var closeDialog: FrameLayout
-    private lateinit var creationText: TextView
-    private lateinit var modificationText: TextView
-    lateinit var viewGroup:ViewGroup
-
     companion object {
-        private const val WINDOW_WIDTH = 150
-        private const val WINDOW_HEIGHT = 100
         fun create(
             parent: ViewGroup,
             activity: FragmentActivity,
@@ -63,28 +56,12 @@ class ItemViewHolder(
             dateItem.text = LongDateToStringConverter.convertLongToDate(todoItem.deadline)
 
         menu.setOnClickListener {
-            val dialog = TodoItemInformationDialog()
-            val window = dialog.activity?.window
-            window?.setLayout(WINDOW_WIDTH, WINDOW_HEIGHT)
-            val halfIcon = menu.height / 2
-            val xMenu = menu.x + halfIcon
-            val windowManager = window?.attributes
-            windowManager?.x = (xMenu - WINDOW_WIDTH / 2).toInt()
-            val layout = LayoutInflater.from(activity.applicationContext).inflate(R.layout.information_dialog, null)
-            closeDialog = layout.findViewById(R.id.close_window)
-            creationText = layout.findViewById(R.id.creation_text)
-            modificationText = layout.findViewById(R.id.modification_text)
-            closeDialog.setOnClickListener {
-                dialog.dismiss()
-            }
-            creationText.text = activity.applicationContext.getString(
-                R.string.creation_date,
-                LongDateToStringConverter.convertLongToDate(todoItem.creationDate)
-            )
-            modificationText.text = activity.applicationContext.getString(
-                R.string.modification_date,
-                LongDateToStringConverter.convertLongToDate(todoItem.modificationDate)
-            )
+            val location = IntArray(2)
+            menu.getLocationOnScreen(location)
+            val x = location[0]
+            val y = location[1]
+            Log.i("Location", "x=$x y=$y")
+            val dialog = TodoItemInformationDialog(x, y, todoItem)
             dialog.show(activity.supportFragmentManager, null)
         }
     }
