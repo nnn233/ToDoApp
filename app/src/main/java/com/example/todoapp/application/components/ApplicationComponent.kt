@@ -1,5 +1,6 @@
 package com.example.todoapp.application.components
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.WorkManager
 import com.example.todoapp.application.factories.ViewModelFactory
 import com.example.todoapp.data.network.HardcodedTodoItemDataSource
@@ -19,5 +20,6 @@ class ApplicationComponent(database: TodoItemRoomDatabase, workManager: WorkMana
 
     fun onCreate() {
         itemsTasksRepository.refreshItemsPeriodically()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
     }
 }
