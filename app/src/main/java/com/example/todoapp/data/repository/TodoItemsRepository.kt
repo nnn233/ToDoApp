@@ -27,14 +27,16 @@ class TodoItemsRepository(
             returnFromDb()
         }
         _items.value = list
-        refreshItems()
+        withContext(Dispatchers.Default) {
+            refreshItems()
+        }
     }
 
     suspend fun refreshItems() =
         withContext(Dispatchers.Default) {
-            val loadedList = remoteDataSource.getItems()
-            localDataSource.upsertAll(loadedList.map { it.toTodoItemEntity() })
-            _items.postValue(returnFromDb())
+                val loadedList = remoteDataSource.getItems()
+                localDataSource.upsertAll(loadedList.map { it.toTodoItemEntity() })
+                _items.postValue(returnFromDb())
         }
 
     suspend fun getItemById(id: String) =
