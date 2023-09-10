@@ -7,17 +7,23 @@ import com.example.todoapp.application.factories.ViewModelFactory
 import com.example.todoapp.data.db.TodoItemRoomDatabase
 import com.example.todoapp.data.network.HardcodedTodoItemDataSource
 import com.example.todoapp.data.repository.ItemsTasksRepository
+import com.example.todoapp.data.repository.RequestRepository
 import com.example.todoapp.data.repository.TodoItemsRepository
 import com.example.todoapp.domain.DeleteItemUseCase
 
 class ApplicationComponent(database: TodoItemRoomDatabase, workManager: WorkManager) {
     private val hardcodedItemsDataSource = HardcodedTodoItemDataSource()
+    private val requestRepository = RequestRepository(database.requestDao)
     private val itemsRepository =
-        TodoItemsRepository(hardcodedItemsDataSource, database.todoItemDao)
+        TodoItemsRepository(hardcodedItemsDataSource, database.todoItemDao, requestRepository)
     private val itemsTasksRepository = ItemsTasksRepository(workManager)
     private val deleteItemUseCase = DeleteItemUseCase(itemsRepository)
 
-    private val networkReceiver=NetworkReceiver(TodoApplication.instance.applicationContext)
+    private val networkReceiver = NetworkReceiver(
+        TodoApplication.instance.applicationContext,
+        requestRepository,
+        hardcodedItemsDataSource
+    )
 
     val viewModelFactory = ViewModelFactory(itemsRepository, deleteItemUseCase)
 

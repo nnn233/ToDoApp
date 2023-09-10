@@ -5,10 +5,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [TodoItemEntity::class], version = 2, exportSchema = false)
+@Database(
+    entities = [TodoItemEntity::class, RequestEntity::class],
+    version = 3,
+    exportSchema = false
+)
 abstract class TodoItemRoomDatabase : RoomDatabase() {
 
     abstract val todoItemDao: LocalTodoItemDataSource
+    abstract val requestDao: LocalRequestDataSource
 
     companion object {
         @Volatile
@@ -19,7 +24,7 @@ abstract class TodoItemRoomDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     TodoItemRoomDatabase::class.java,
-                    "word_database"
+                    "items_database"
                 ).build()
                 INSTANCE = instance
                 instance
