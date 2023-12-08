@@ -1,33 +1,20 @@
 package com.example.todoapp.presentation.view_models
 
-import android.database.sqlite.SQLiteException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.repository.TodoItemsRepository
-import com.example.todoapp.domain.DeleteItemUseCase
 import com.example.todoapp.presentation.fragments.items.ItemsUIState
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 class ItemsViewModel(
-    private val todoItemRepository: TodoItemsRepository,
-    private val deleteItemUseCase: DeleteItemUseCase
+    private val todoItemRepository: TodoItemsRepository
 ) : ViewModel() {
 
     private var _itemsState = MediatorLiveData(ItemsUIState(items = listOf()))
     val itemsState: LiveData<ItemsUIState>
         get() = _itemsState
-
-    private var _errorState = MutableLiveData<ErrorState>()
-    val errorState: LiveData<ErrorState>
-        get() = _errorState
-
-    private var _isLoading = MutableLiveData(false)
-    val isLoading: LiveData<Boolean>
-        get() = _isLoading
 
     init {
         _itemsState.addSource(todoItemRepository.items) { list ->
@@ -45,58 +32,31 @@ class ItemsViewModel(
 
     private fun refreshDataItems() {
         viewModelScope.launch {
-            try {
-                _isLoading.postValue(true)
-                todoItemRepository.getItems()
-                _isLoading.postValue(false)
-                _errorState.postValue(ErrorState())
-            } catch (_: IOException) {
-                _errorState.postValue(ErrorState(remoteError = true))
-            } catch (_: SQLiteException) {
-                ErrorState(dbError = true)
-            }
+            todoItemRepository.getItems()
         }
     }
 
     fun onChangedVisibilityState() {
         viewModelScope.launch {
-            try {
-                val isVisible = !(_itemsState.value?.isDoneItemsVisible ?: true)
-                _itemsState.postValue(
-                    itemsState.value?.copy(
-                        isDoneItemsVisible = isVisible
-                    )
+            val isVisible = !(_itemsState.value?.isDoneItemsVisible ?: true)
+            _itemsState.postValue(
+                itemsState.value?.copy(
+                    isDoneItemsVisible = isVisible
                 )
-                refreshDataItems()
-            } catch (_: IOException) {
-                _errorState.postValue(ErrorState(remoteError = true))
-            } catch (_: SQLiteException) {
-                ErrorState(dbError = true)
-            }
+            )
+            refreshDataItems()
         }
     }
 
     fun onChangedDoneState(id: String, isDone: Boolean) {
         viewModelScope.launch {
-            try {
-                todoItemRepository.changeDoneState(id, isDone)
-            } catch (_: IOException) {
-                _errorState.postValue(ErrorState(remoteError = true))
-            } catch (_: SQLiteException) {
-                ErrorState(dbError = true)
-            }
+            todoItemRepository.changeDoneState(id, isDone)
         }
     }
 
     fun deleteItem(id: String) {
         viewModelScope.launch {
-            try {
-                deleteItemUseCase(id)
-            } catch (_: IOException) {
-                _errorState.postValue(ErrorState(remoteError = true))
-            } catch (_: SQLiteException) {
-                ErrorState(dbError = true)
-            }
+            todoItemRepository.deleteItem(id)
         }
     }
 }

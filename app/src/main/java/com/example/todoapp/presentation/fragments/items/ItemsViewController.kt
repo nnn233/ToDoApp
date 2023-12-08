@@ -3,8 +3,6 @@ package com.example.todoapp.presentation.fragments.items
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
@@ -41,7 +39,6 @@ class ItemsViewController(
     fun setUpViews() {
         setUpItemsList()
         setUpItemsCountView()
-        setUpErrors()
         setUpCollapsingToolBar()
         setUpAdapterClickListener()
         setUpButtonClickListener()
@@ -139,31 +136,11 @@ class ItemsViewController(
     }
 
     private fun changeItems(items: List<TodoItemUIState>) {
-        if (items.isEmpty() && viewModel.isLoading.value != true)
+        if (items.isEmpty())
             setUpNullItemsText(true)
         else {
             setUpNullItemsText(false)
             adapter.items = items as MutableList<TodoItemUIState>
-        }
-    }
-
-
-    private fun setUpErrors() {
-        viewModel.errorState.observe(lifecycleOwner) { error ->
-            if (error.remoteError) {
-                Toast.makeText(
-                    activity.applicationContext,
-                    activity.applicationContext.getString(R.string.network_items_error),
-                    LENGTH_SHORT
-                ).show()
-            }
-            if (error.dbError) {
-                Toast.makeText(
-                    activity.applicationContext,
-                    activity.applicationContext.getString(R.string.db_items_error),
-                    LENGTH_SHORT
-                ).show()
-            }
         }
     }
 }

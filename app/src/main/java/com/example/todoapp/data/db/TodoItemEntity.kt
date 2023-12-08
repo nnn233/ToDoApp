@@ -8,10 +8,10 @@ import com.example.todoapp.application.ItemPriority
 data class TodoItemEntity(
     @PrimaryKey
     val id: String,
-    var description:String,
+    var description: String,
     var importance: ItemPriority,
-    var deadline:Long=0,
-    var isDone:Boolean,
+    var deadline: Long = 0,
+    var isDone: Boolean,
     val creation_date: Long,
-    var modification_date:Long=0
+    var modification_date: Long = 0
 )

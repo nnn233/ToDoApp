@@ -43,7 +43,6 @@ class TodoItemViewController(
 
     fun setUpViews() {
         setUpItem()
-        setUpErrors()
         setUpDeadlineChangedListener()
         setUpPriorityChangedListener()
         setUpDeleteClickListeners()
@@ -126,25 +125,6 @@ class TodoItemViewController(
         viewModel.item.observe(lifecycleOwner) { newItem ->
             if (checkIsItemEdited())
                 viewHolder.onBind(newItem)
-        }
-    }
-
-    private fun setUpErrors() {
-        viewModel.errorState.observe(lifecycleOwner) { error ->
-            if (error.remoteError) {
-                Toast.makeText(
-                    activity.applicationContext,
-                    activity.applicationContext.getString(R.string.network_items_error),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            if (error.dbError) {
-                Toast.makeText(
-                    activity.applicationContext,
-                    activity.applicationContext.getString(R.string.db_items_error),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
         }
     }
 

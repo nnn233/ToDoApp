@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import androidx.room.Upsert
 
 @Dao
 interface LocalTodoItemDataSource {
@@ -23,10 +22,4 @@ interface LocalTodoItemDataSource {
 
     @Query("SELECT * FROM items_table")
     suspend fun getItems(): List<TodoItemEntity>
-
-    @Upsert
-    suspend fun upsertAll(items: List<TodoItemEntity>)
-
-    @Query("DELETE FROM items_table")
-    suspend fun clearAll()
 }

@@ -26,13 +26,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
-        android:maxLines="3"
         android:ellipsize="end"
-        app:layout_constrainedWidth="true"
+        android:maxLines="3"
         android:textAppearance="@style/TextAppearance.TodoApp.Body"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/extra_info"
         app:layout_constraintStart_toEndOf="@id/image_priority"
-        app:layout_constraintTop_toTopOf="@id/check_box"
-        app:layout_constraintEnd_toStartOf="@id/extra_info"/>
+        app:layout_constraintTop_toTopOf="@id/check_box" />
 
     <TextView
         android:id="@+id/item_date"

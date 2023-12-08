@@ -6,14 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [TodoItemEntity::class, RequestEntity::class],
-    version = 3,
+    entities = [TodoItemEntity::class],
+    version = 1,
     exportSchema = false
 )
 abstract class TodoItemRoomDatabase : RoomDatabase() {
 
     abstract val todoItemDao: LocalTodoItemDataSource
-    abstract val requestDao: LocalRequestDataSource
 
     companion object {
         @Volatile
